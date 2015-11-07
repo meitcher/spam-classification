@@ -80,6 +80,8 @@ while passes < max_passes,
     num_changed_alphas = 0;
     for i = 1:m,
         
+        fprintf('%5d of %d\r', i, m);
+
         % Calculate Ei = f(x(i)) - y(i) using (2). 
         % E(i) = b + sum (X(i, :) * (repmat(alphas.*Y,1,n).*X)') - Y(i);
         E(i) = b + sum (alphas.*Y.*K(:,i)) - Y(i);
@@ -88,10 +90,19 @@ while passes < max_passes,
             
             % In practice, there are many heuristics one can use to select
             % the i and j. In this simplified code, we select them randomly.
+            
+
             j = ceil(m * rand());
-            while j == i,  % Make sure i \neq j
-                j = ceil(m * rand());
+            if j == i
+                j = i+1;
+                if j > m
+                    j = 1;
+                end
             end
+            % while j == i,  % Make sure i \neq j
+            %     j = ceil(m * rand());
+            %     fprintf('asudhusa')
+            % end
 
             % Calculate Ej = f(x(j)) - y(j) using (2).
             E(j) = b + sum (alphas.*Y.*K(:,j)) - Y(j);

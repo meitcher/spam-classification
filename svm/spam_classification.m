@@ -1,21 +1,30 @@
 clear ; close all; clc
 
+fprintf('Loading vocabulary...\n')
 n = 45525;
 [vocabList, vocabIndex] = getVocabList('vocabulary/enron1_vocabulary.txt', n);
+% save vocabs.mat vocabList vocabIndex
+% load('vocabs.mat')
+% n = length(vocabIndex);
+
+size(vocabIndex)
+
 % [X, y] = getEnron1(vocabList, n);
 % save enron1.mat X y
+fprintf('Loading X,Y...\n')
 load('enron1.mat')
 
 [m, asd] = size(X)
-t = floor(m - 0.8*m)
-v = floor(t - 0.5*t)
+t = floor(m - 0.2*m)
+Xtrain = X(1:t, :);
+Xval = X(t:m, :);
 
-Xtrain = X(1:t);
-Xval = X(t:t+v);
-Xtest = X(t+v:m);
-ytrain = y(1:t);
-yval = y(t:t+v);
-ytest = y(t+v:m);
+ytrain = y(1:t, :);
+yval = y(t:m, :);
+
+size(Xtrain)
+size(ytrain)
+
 
 
 fprintf('\nTraining Linear SVM (Spam Classification)\n')
@@ -30,17 +39,14 @@ fprintf('Training Accuracy: %f\n', mean(double(p == ytrain)) * 100);
 p = svmPredict(model, Xval);
 fprintf('Validating Accuracy: %f\n', mean(double(p == yval)) * 100);
 
-p = svmPredict(model, Xtest);
-fprintf('Testing Accuracy: %f\n', mean(double(p == ytest)) * 100);
-
 
 
 % Sort the weights and obtin the vocabulary list
-[weight, idx] = sort(model.w, 'descend');
+[weight, idx] = sort(model.w);
 
 fprintf('\nTop predictors of spam: \n');
 for i = 1:15
-    fprintf(' %-15s (%f) \n', vocabIndex(idx(i)), weight(i));
+    fprintf(' %-15s (%f) \n', vocabIndex{idx(i)}, weight(i));
 end
 
 fprintf('\n\n');
