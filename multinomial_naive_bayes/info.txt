@@ -1,0 +1,2 @@
+implementar um classificador de spam usando naive-bayes
+dataset: http://www.aueb.gr/users/ion/data/enron-spam/
